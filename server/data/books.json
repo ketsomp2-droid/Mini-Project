@@ -1,0 +1,29 @@
+[
+  {
+    "id": 3,
+    "title": "Clean Code",
+    "author": "สมศรี",
+    "category": "Code",
+    "status": "reading",
+    "rating": 2,
+    "createdAt": "2026-09-29T14:42:01.470Z"
+  },
+  {
+    "id": 4,
+    "title": "The Pragmatic Programmer",
+    "author": "สมศรี",
+    "category": "Code",
+    "status": "want-to-read",
+    "rating": 0,
+    "createdAt": "2026-09-29T14:42:18.374Z"
+  },
+  {
+    "id": 5,
+    "title": "ทำอาหารง่ายๆ เด็กหอ",
+    "author": "สมศรี",
+    "category": "อาหาร",
+    "status": "finished",
+    "rating": 4,
+    "createdAt": "2026-09-29T14:42:58.701Z"
+  }
+]

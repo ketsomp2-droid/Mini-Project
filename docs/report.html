@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายงานผลการพัฒนา Reading List API & Web App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+    
+    body {
+      font-family: 'Sarabun', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    h2 {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 8px;
+      color: #1e3a8a;
+      margin-top: 30px;
+    }
+
+    h3 {
+      color: #1e40af;
+      margin-top: 20px;
+    }
+
+    p {
+      text-align: justify;
+      margin-bottom: 12px;
+    }
+
+    figure {
+      margin: 20px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+
+    figure img {
+      max-width: 580px;
+      width: 100%;
+      height: auto;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    figcaption {
+      margin-top: 8px;
+      font-size: 0.9em;
+      color: #4b5563;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f3f4f6;
+      color: #1f2937;
+      width: 25%;
+    }
+
+    code {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    /* การตั้งค่าสำหรับการพิมพ์ PDF */
+    @media print {
+      body {
+        padding: 0;
+        max-width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      figure img {
+        max-width: 500px; /* ย่อรูปเล็กน้อยตอนบันทึกเป็น PDF */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== รายการ API Screenshots ========== -->
+  <figure><img src="screenshots/01-get-all.png.png" alt="01" />
+  <figcaption>ภาพที่ 1 GET /api/books ดึงรายการทั้งหมด (200)</figcaption></figure>
+
+  <figure><img src="screenshots/02-get-filter.png.png" alt="02" />
+  <figcaption>ภาพที่ 2 GET /api/books?status=reading กรองตามสถานะ (200)</figcaption></figure>
+
+  <figure><img src="screenshots/03-get-by-id.png.png" alt="03" />
+  <figcaption>ภาพที่ 3 GET /api/books/1 ดึงหนังสือรายเล่ม (200)</figcaption></figure>
+
+  <figure><img src="screenshots/04-get-not-found.png.png" alt="04" />
+  <figcaption>ภาพที่ 4 GET /api/books/999 ไม่พบหนังสือ (404)</figcaption></figure>
+
+  <figure><img src="screenshots/05-post-success.png.png" alt="05" />
+  <figcaption>ภาพที่ 5 POST /api/books เพิ่มหนังสือสำเร็จ (201)</figcaption></figure>
+
+  <figure><img src="screenshots/06-post-invalid.png.png" alt="06" />
+  <figcaption>ภาพที่ 6 POST /api/books ไม่ส่ง title (400)</figcaption></figure>
+
+  <figure><img src="screenshots/07-patch-success.png.png" alt="07" />
+  <figcaption>ภาพที่ 7 PATCH /api/books/1 แก้ไขสถานะและคะแนน (200)</figcaption></figure>
+
+  <figure><img src="screenshots/08-patch-invalid.png.png" alt="08" />
+  <figcaption>ภาพที่ 8 PATCH /api/books/1 ส่ง status ผิดค่า (400)</figcaption></figure>
+
+  <figure><img src="screenshots/09-delete-success.png.png" alt="09" />
+  <figcaption>ภาพที่ 9 DELETE /api/books/2 ลบสำเร็จ (204)</figcaption></figure>
+
+  <figure><img src="screenshots/10-delete-not-found.png.png" alt="10" />
+  <figcaption>ภาพที่ 10 DELETE /api/books/2 ซ้ำอีกครั้ง ไม่พบหนังสือ (404)</figcaption></figure>
+
+  <div class="page-break"></div>
+
+  <!-- ========== 5. หน้าเว็บแอปพลิเคชัน ========== -->
+  <h2>5. หน้าเว็บแอปพลิเคชัน</h2>
+  <p>หน้าเว็บเรียกใช้ API ผ่าน <code>fetch</code> ทั้งหมด และสร้างการ์ดหนังสือด้วย <code>textContent</code> เพื่อป้องกันการแทรก HTML (XSS)</p>
+
+  <figure><img src="screenshots/11-ui-home.png.png" alt="11" />
+  <figcaption>ภาพที่ 11 หน้าหลักแสดงรายการหนังสือ</figcaption></figure>
+
+  <figure><img src="screenshots/12-ui-add.png.png" alt="12" />
+  <figcaption>ภาพที่ 12 เพิ่มหนังสือใหม่ผ่านฟอร์ม</figcaption></figure>
+
+  <figure><img src="screenshots/13-ui-edit.png.png" alt="13" />
+  <figcaption>ภาพที่ 13 โหมดแก้ไขหนังสือ</figcaption></figure>
+
+  <figure><img src="screenshots/14-ui-delete.png.png" alt="14" />
+  <figcaption>ภาพที่ 14 กล่องยืนยันก่อนลบ</figcaption></figure>
+
+  <figure><img src="screenshots/15-ui-search.png.png" alt="15" />
+  <figcaption>ภาพที่ 15 ค้นหาด้วยชื่อหรือผู้แต่ง</figcaption></figure>
+
+  <figure><img src="screenshots/16-ui-filter.png.png" alt="16" />
+  <figcaption>ภาพที่ 16 กรองตามสถานะ</figcaption></figure>
+
+  <div class="page-break"></div>
+
+  <!-- ========== 6. การดีบัก (Debugging) ========== -->
+  <h2>6. การดีบัก (Debugging)</h2>
+
+  <h3>6.1 ปัญหาฝั่งเซิร์ฟเวอร์: package.json ผิดรูปแบบ</h3>
+  <table>
+    <tr><th>อาการ</th><td>รัน <code>npm run dev</code> แล้วขึ้น <code>Invalid package.json ... line 10 column 3</code> เซิร์ฟเวอร์ไม่เริ่มทำงาน</td></tr>
+    <tr><th>การตรวจสอบ</th><td>อ่านข้อความ error ที่ระบุบรรทัดและคอลัมน์ แล้วเปิด package.json ดูส่วน <code>scripts</code></td></tr>
+    <tr><th>สาเหตุ</th><td>ตอนแก้ <code>scripts</code> มีเครื่องหมายปีกกาปิด <code>},</code> ซ้ำเกินมา 1 ชุด ทำให้ JSON ผิดไวยากรณ์</td></tr>
+    <tr><th>วิธีแก้</th><td>ลบปีกกาที่เกินออก ให้เหลือ <code>},</code> เพียงชุดเดียว แล้วบันทึกและรันใหม่</td></tr>
+    <tr><th>ผลลัพธ์</th><td>เซิร์ฟเวอร์ขึ้น <code>Server running at http://localhost:3000</code></td></tr>
+  </table>
+  <figure><img src="screenshots/17-debug-server.png.png" alt="17" />
+  <figcaption>ภาพที่ 17 ข้อความ error ก่อนแก้ไข</figcaption></figure>
+
+  <h3>6.2 ปัญหาฝั่งไคลเอนต์</h3>
+  <table>
+    <tr><th>อาการ</th><td>กดปุ่มเพิ่ม/แก้ไขหนังสือ หรือโหลดหน้าเว็บแล้วข้อมูลไม่แสดงผล หรือส่งคำขอไปยัง API ไม่สำเร็จ (ขึ้น TypeError ใน Console)</td></tr>
+    <tr><th>การตรวจสอบ</th><td>เปิด DevTools (F12) ดูที่แท็บ Console พบข้อความสีแดง <code>Uncaught (in promise) TypeError: Failed to fetch</code> และตรวจสอบแท็บ Network พบสถานะคำขอขึ้น Failed</td></tr>
+    <tr><th>สาเหตุ</th><td>ระบุ URL ของ API หรือ Port ไม่ถูกต้อง (เช่น ลืมระบุ port 3000 หรือพิมพ์พาธ API ผิด) หรือฝั่ง Server ยังไม่ได้เริ่มทำงาน ทำให้ Browser ไม่สามารถเชื่อมต่อ API ได้</td></tr>
+    <tr><th>วิธีแก้</th><td>ตรวจสอบและแก้ไข URL ในฟังก์ชัน <code>fetch()</code> ให้ถูกต้องเป็น <code>http://localhost:3000/api/books</code> และตรวจสอบให้แน่ใจว่าได้เปิดรันเซิร์ฟเวอร์เรียบร้อยแล้ว</td></tr>
+    <tr><th>ผลลัพธ์</th><td>หน้าเว็บสามารถเชื่อมต่อ API ดึงข้อมูลมาแสดงผล และส่งคำขอผ่านฟอร์มได้สำเร็จโดยไม่เกิด error ใน Console</td></tr>
+  </table>
+  <figure><img src="screenshots/18-debug-client.png.png" alt="18" />
+  <figcaption>ภาพที่ 18 ตัวอย่างการดีบักฝั่งไคลเอนต์</figcaption></figure>
+
+  <!-- ========== 7. สรุป ========== -->
+  <h2>7. สรุป</h2>
+  <p>
+    โครงงานนี้ได้ออกแบบและพัฒนา REST API สำหรับจัดการรายการหนังสือ ครบทั้ง 5 endpoint
+    ใช้ HTTP Method และ Status Code ตรงตามความหมาย มีการตรวจสอบข้อมูลที่ฝั่งเซิร์ฟเวอร์
+    และมีหน้าเว็บเรียกใช้งานได้จริง การทดสอบ 10 กรณีแสดงว่า API ตอบสนองถูกต้องทั้งกรณีปกติและกรณีผิดพลาด
+  </p>
+  <p><b>ข้อจำกัดและแนวทางพัฒนาต่อ:</b> ปัจจุบันเก็บข้อมูลในไฟล์ JSON ซึ่งเหมาะกับผู้ใช้คนเดียว
+  หากต้องรองรับผู้ใช้หลายคนควรเปลี่ยนไปใช้ฐานข้อมูล เช่น SQLite หรือ MongoDB เพิ่มระบบล็อกอิน
+  และเพิ่มการแบ่งหน้า (pagination) เมื่อมีหนังสือจำนวนมาก</p>
+
+</body>
+</html>
